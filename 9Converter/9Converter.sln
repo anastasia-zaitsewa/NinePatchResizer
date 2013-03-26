@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "9Converter", "9Converter\9Converter.csproj", "{D642CD19-0E57-4141-B3CA-93EEDC597835}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D642CD19-0E57-4141-B3CA-93EEDC597835}.Debug|x86.ActiveCfg = Debug|x86
+		{D642CD19-0E57-4141-B3CA-93EEDC597835}.Debug|x86.Build.0 = Debug|x86
+		{D642CD19-0E57-4141-B3CA-93EEDC597835}.Release|x86.ActiveCfg = Release|x86
+		{D642CD19-0E57-4141-B3CA-93EEDC597835}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
