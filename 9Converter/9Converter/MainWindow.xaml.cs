@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Collections;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -31,7 +30,7 @@ namespace _9Converter
             Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
-            ArrayList[] frameMatrix = new ArrayList[4];
+            List<int>[] frameMatrix = new List<int>[4];
 
             #region Fill frameMatrix
             //horizontal-top
@@ -94,7 +93,7 @@ namespace _9Converter
             //vertical-left
             curColor = Source.GetPixel(0, 0);
             count = 0;
-
+            
             for (int i = 0; i < sourceHeight; i++)
             {
                 if (Source.GetPixel(0, i) == curColor)
@@ -112,10 +111,15 @@ namespace _9Converter
             #endregion
 
             #region Create resizingMatrix6, 4 and 3
-            bool [][] resizingMatrix6=new bool[4][];
-            for (int i = 0; i < sourceWidth*6/8; i++)
+            List<int>[] resizingMatrix6 = new List<int>[4];
+            int k = 6;
+            for (int i = 0; i < frameMatrix.Length; i++)
             {
-                
+                for (int j = 0; j < frameMatrix[i].Count; j++)
+                {
+                    //frameMatrix[i][j]
+                    //resizingMatrix6[i].Add();
+                }
             }
             #endregion
         }
