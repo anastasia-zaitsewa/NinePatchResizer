@@ -50,4 +50,8 @@ _ReSharper*/
 # Microsoft Office Temp Files
 #
 ~$*
- 
+
+#
+#Other files
+# 
+testsource.txt
