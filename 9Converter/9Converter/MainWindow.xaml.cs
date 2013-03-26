@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -30,36 +31,84 @@ namespace _9Converter
             Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
-            bool[][] frameMatrix = new bool[4][];
-            frameMatrix[0] = new bool[sourceWidth]; //horizontal-top
-            frameMatrix[1] = new bool[sourceHeight];//vertical-right
-            frameMatrix[2] = new bool[sourceWidth]; //horizontal-bottom
-            frameMatrix[3] = new bool[sourceHeight];//vertical-left
+            ArrayList[] frameMatrix = new ArrayList[4];
 
             #region Fill frameMatrix
-            for (int i = 0; i < frameMatrix[0].Length; i++)
-            {
-                if (Source.GetPixel(0, i) == System.Drawing.Color.Black)
-                    frameMatrix[0][i] = true;
-            }
+            //horizontal-top
+            System.Drawing.Color curColor = Source.GetPixel(0, 0);
+            int count = 0;
 
-            for (int i = 0; i < frameMatrix[1].Length; i++)
+            for (int i = 0; i < sourceWidth; i++)
             {
-                if (Source.GetPixel(i, sourceWidth-1) == System.Drawing.Color.Black)
-                    frameMatrix[1][i] = true;
+                if (Source.GetPixel(i, 0) == curColor)
+                {
+                    count++;
+                }
+                else
+                {
+                    frameMatrix[0].Add(count);
+                    curColor = Source.GetPixel(i, 0);
+                    count = 0;
+                }
             }
+            frameMatrix[0].Add(count);
 
-            for (int i = 0; i < frameMatrix[2].Length; i++)
-            {
-                if (Source.GetPixel(sourceHeight-1, i) == System.Drawing.Color.Black)
-                    frameMatrix[2][i] = true;
-            }
+            //vertical-right
+            curColor = Source.GetPixel(sourceWidth, 0);
+            count = 0;
 
-            for (int i = 0; i < frameMatrix[3].Length; i++)
+            for (int i = 0; i < sourceHeight; i++)
             {
-                if (Source.GetPixel(i, 0) == System.Drawing.Color.Black)
-                    frameMatrix[2][i] = true;
+                if (Source.GetPixel(sourceWidth, i) == curColor)
+                {
+                    count++;
+                }
+                else
+                {
+                    frameMatrix[1].Add(count);
+                    curColor = Source.GetPixel(sourceWidth, i);
+                    count = 0;
+                }
             }
+            frameMatrix[1].Add(count);
+
+            //horizontal-bottom
+            curColor = Source.GetPixel(0, sourceHeight);
+            count = 0;
+
+            for (int i = 0; i < sourceWidth; i++)
+            {
+                if (Source.GetPixel(i, sourceHeight) == curColor)
+                {
+                    count++;
+                }
+                else
+                {
+                    frameMatrix[2].Add(count);
+                    curColor = Source.GetPixel(i, sourceHeight);
+                    count = 0;
+                }
+            }
+            frameMatrix[2].Add(count);
+
+            //vertical-left
+            curColor = Source.GetPixel(0, 0);
+            count = 0;
+
+            for (int i = 0; i < sourceHeight; i++)
+            {
+                if (Source.GetPixel(0, i) == curColor)
+                {
+                    count++;
+                }
+                else
+                {
+                    frameMatrix[3].Add(count);
+                    curColor = Source.GetPixel(0, i);
+                    count = 0;
+                }
+            }
+            frameMatrix[3].Add(count);
             #endregion
 
             #region Create resizingMatrix6, 4 and 3
