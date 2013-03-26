@@ -132,18 +132,27 @@ namespace _9Converter
             Bitmap resizingImage6 = ResizeBitmap(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
             Bitmap resizingImage4 = ResizeBitmap(cropSource, sourceWidth / 2, sourceHeight / 2);
             Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8);
-            string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
-            NonLockingSave(resizingImage6, fn, ImageFormat.Png);
-            /*
-            Bitmap clearSource = new Bitmap(163, 99);
-            using (Graphics gr = Graphics.FromImage(clearSource))
-            {
-                gr.Clear(System.Drawing.Color.Transparent);
-                gr.DrawImage(cropSource, 1, 1);
-            }*/
+            /*string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
+            NonLockingSave(resizingImage6, fn, ImageFormat.Png);*/
+            
+            //Expand
+            Bitmap expandedImage6 = ExpandBitmap(resizingImage6);
+            Bitmap expandedImage4 = ExpandBitmap(resizingImage4);
+            Bitmap expandedImage3 = ExpandBitmap(resizingImage3);
             
             //NonLockingSave(cropSource, filename, ImageFormat.Png);
             #endregion
+        }
+
+        private static Bitmap ExpandBitmap(Bitmap btm)
+        {
+            Bitmap result = new Bitmap(btm.Width + 2, btm.Height + 2);
+            using (Graphics gr = Graphics.FromImage(result))
+            {
+                gr.Clear(System.Drawing.Color.Transparent);
+                gr.DrawImage(btm, 1, 1);
+            }
+            return result;
         }
 
         private static List<int>[] Resizing(List<int>[] frameMatrix, int k)
