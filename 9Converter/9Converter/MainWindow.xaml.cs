@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Drawing;
+
 
 namespace _9Converter
 {
@@ -122,11 +123,26 @@ namespace _9Converter
             List<int>[] resizingMatrix3 = Resizing(frameMatrix, 3);
             #endregion
 
-            #region Crop Source Image
+            #region Crop, Resize and Expand Source Image
+            //Crop
             System.Drawing.Rectangle cropArea = new System.Drawing.Rectangle(1, 1, 161, 97);
             Bitmap cropSource = Source.Clone(cropArea, Source.PixelFormat);
-            string filename=@"C:\Users\Настя\Documents\Projects\nineConverter\spinner_cut.9.png";
-            NonLockingSave(cropSource, filename, ImageFormat.Png);
+            
+            //Resize
+            Bitmap resizingImage6 = ResizeBitmap(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
+            Bitmap resizingImage4 = ResizeBitmap(cropSource, sourceWidth / 2, sourceHeight / 2);
+            Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8);
+            string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
+            NonLockingSave(resizingImage6, fn, ImageFormat.Png);
+            /*
+            Bitmap clearSource = new Bitmap(163, 99);
+            using (Graphics gr = Graphics.FromImage(clearSource))
+            {
+                gr.Clear(System.Drawing.Color.Transparent);
+                gr.DrawImage(cropSource, 1, 1);
+            }*/
+            
+            //NonLockingSave(cropSource, filename, ImageFormat.Png);
             #endregion
         }
 
@@ -209,6 +225,17 @@ namespace _9Converter
                 }
                 MessageBox.Show(ex.Message);
             }
+            MessageBox.Show("Saved");
+        }
+
+        private static Bitmap ResizeBitmap(Bitmap source, int width, int height)
+        {
+            Bitmap result = new Bitmap(width, height);
+            using (Graphics gr=Graphics.FromImage(result))
+            {
+                gr.DrawImage(source, 0, 0, width, height);
+            }
+            return result;
         }
     }
 }
