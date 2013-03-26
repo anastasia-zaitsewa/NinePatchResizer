@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Drawing.Imaging;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -118,7 +120,13 @@ namespace _9Converter
             List<int>[] resizingMatrix6 = Resizing(frameMatrix, 6);
             List<int>[] resizingMatrix4 = Resizing(frameMatrix, 4);
             List<int>[] resizingMatrix3 = Resizing(frameMatrix, 3);
-            int ch;
+            #endregion
+
+            #region Crop Source Image
+            System.Drawing.Rectangle cropArea = new System.Drawing.Rectangle(1, 1, 161, 97);
+            Bitmap cropSource = Source.Clone(cropArea, Source.PixelFormat);
+            string filename=@"C:\Users\Настя\Documents\Projects\nineConverter\spinner_cut.9.png";
+            NonLockingSave(cropSource, filename, ImageFormat.Png);
             #endregion
         }
 
@@ -155,6 +163,52 @@ namespace _9Converter
                 }
             }
             return resizingMatrix;
+        }
+
+        public static void NonLockingSave(Bitmap btm, string filename, ImageFormat format)
+        {
+            if (File.Exists(filename))
+            {
+                File.Delete(filename);
+            }
+            try
+            {
+                #region Convert Bitmap to Destination Format
+                MemoryStream ms = new MemoryStream();
+                Bitmap btm2 = (Bitmap)btm.Clone();
+                btm2.Save(ms, format);
+                btm2.Dispose();
+                byte[] byteArr = ms.ToArray();
+                ms.Close();
+                ms.Dispose();
+                #endregion
+
+                #region Save Byte Array to File
+                FileStream fs = new FileStream(filename, FileMode.CreateNew, FileAccess.Write);
+                try
+                {
+                    fs.Write(byteArr, 0, byteArr.Length);
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    fs.Close();
+                    fs.Dispose();
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
