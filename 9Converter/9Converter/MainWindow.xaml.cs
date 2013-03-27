@@ -132,6 +132,7 @@ namespace _9Converter
             Bitmap resizingImage6 = ResizeBitmap(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
             Bitmap resizingImage4 = ResizeBitmap(cropSource, sourceWidth / 2, sourceHeight / 2);
             Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8);
+
             /*string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
             NonLockingSave(resizingImage6, fn, ImageFormat.Png);*/
             
@@ -139,9 +140,96 @@ namespace _9Converter
             Bitmap expandedImage6 = ExpandBitmap(resizingImage6);
             Bitmap expandedImage4 = ExpandBitmap(resizingImage4);
             Bitmap expandedImage3 = ExpandBitmap(resizingImage3);
-            
-            //NonLockingSave(cropSource, filename, ImageFormat.Png);
             #endregion
+
+            #region Draw Nine_Stamp
+            Draw9PatchStamp(resizingMatrix6, expandedImage6);
+            string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_final.9.png";
+            NonLockingSave(expandedImage6, fn, ImageFormat.Png);
+            #endregion
+        }
+
+        private static void Draw9PatchStamp(List<int>[] resizingMatrix, Bitmap expandedImage)
+        {
+            //horizontal-top
+            int total = 0;
+            for (int i = 0; i < resizingMatrix[0].Count - 1; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    for (int j = 0; j < resizingMatrix[0][i]; j++)
+                    {
+                        {
+                            expandedImage.SetPixel(total, 0, System.Drawing.Color.Black);
+                            total++;
+                        }
+                    }
+                }
+                else
+                {
+                    total += resizingMatrix[0][i];
+                }
+            }
+
+            //vertical-right
+            total = 0;
+            for (int i = 0; i < resizingMatrix[1].Count - 1; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    for (int j = 0; j < resizingMatrix[1][i]; j++)
+                    {
+                        {
+                            expandedImage.SetPixel(expandedImage.Width - 1, total, System.Drawing.Color.Black);
+                            total++;
+                        }
+                    }
+                }
+                else
+                {
+                    total += resizingMatrix[1][i];
+                }
+            }
+
+            //horizontal-bottom
+            total = 0;
+            for (int i = 0; i < resizingMatrix[2].Count - 1; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    for (int j = 0; j < resizingMatrix[2][i]; j++)
+                    {
+                        {
+                            expandedImage.SetPixel(total, expandedImage.Height - 1, System.Drawing.Color.Black);
+                            total++;
+                        }
+                    }
+                }
+                else
+                {
+                    total += resizingMatrix[2][i];
+                }
+            }
+
+            //vertical-left
+            total = 0;
+            for (int i = 0; i < resizingMatrix[3].Count - 1; i++)
+            {
+                if (i % 2 == 1)
+                {
+                    for (int j = 0; j < resizingMatrix[3][i]; j++)
+                    {
+                        {
+                            expandedImage.SetPixel(0, total, System.Drawing.Color.Black);
+                            total++;
+                        }
+                    }
+                }
+                else
+                {
+                    total += resizingMatrix[3][i];
+                }
+            }
         }
 
         private static Bitmap ExpandBitmap(Bitmap btm)
