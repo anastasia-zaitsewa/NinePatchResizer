@@ -25,7 +25,24 @@ namespace _9Converter
     {
         public MainWindow()
         {
+            
             InitializeComponent();
+        }
+
+        private void CreateDir(string filename)
+        {
+            string[] splitPath = filename.Split(@"\"[0]);
+            int fnLength = splitPath[splitPath.Length - 1].Length;
+            string folderPath = filename.Remove(filename.Length - fnLength);
+
+            if (!Directory.Exists(folderPath + @"\drawable-xhdpi"))
+                Directory.CreateDirectory(folderPath + @"\drawable-xhdpi");
+            if (!Directory.Exists(folderPath + @"\drawable-hdpi"))
+                Directory.CreateDirectory(folderPath + @"\drawable-hdpi");
+            if (!Directory.Exists(folderPath + @"\drawable-mdpi"))
+                Directory.CreateDirectory(folderPath + @"\drawable-mdpi");
+            if (!Directory.Exists(folderPath + @"\drawable-ldpi"))
+                Directory.CreateDirectory(folderPath + @"\drawable-ldpi");
         }
 
         private void btnConvert_Click(object sender, RoutedEventArgs e)
@@ -33,6 +50,7 @@ namespace _9Converter
             Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
+
             List<int>[] frameMatrix = new List<int>[4];
             frameMatrix[0] = new List<int>();
             frameMatrix[1] = new List<int>();
@@ -131,7 +149,8 @@ namespace _9Converter
             //Resize
             Bitmap resizingImage6 = ResizeBitmap(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
             Bitmap resizingImage4 = ResizeBitmap(cropSource, sourceWidth / 2, sourceHeight / 2);
-            Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8);
+            Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8, 
+                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
 
             /*string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
             NonLockingSave(resizingImage6, fn, ImageFormat.Png);*/
@@ -144,9 +163,56 @@ namespace _9Converter
 
             #region Draw Nine_Stamp
             Draw9PatchStamp(resizingMatrix6, expandedImage6);
-            string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_final.9.png";
-            NonLockingSave(expandedImage6, fn, ImageFormat.Png);
+            Draw9PatchStamp(resizingMatrix4, expandedImage4);
+            Draw9PatchStamp(resizingMatrix3, expandedImage3);
             #endregion
+            
+            #region Work with Files and Directories
+            CreateDir(txtFileName.Text);
+            string fn=txtFileName.Text;
+            string[] splitPath = fn.Split(@"\"[0]);
+            int ln = splitPath.Length;
+
+            string[] splitPathDpi=new string[ln];
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(Source, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-hdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(expandedImage6, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-mdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(expandedImage4, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-ldpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(expandedImage3, fn, ImageFormat.Png);
+            #endregion
+            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
+        }
+
+        private static string CancelSplitString(string[] split)
+        {
+            string fn = "";
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (i == split.Length - 1)
+                {
+                    fn += split[i];
+                }
+                else
+                {
+                    fn = fn + split[i] + @"\"[0];
+                }
+
+            }
+            return fn;
         }
 
         private static void Draw9PatchStamp(List<int>[] resizingMatrix, Bitmap expandedImage)
@@ -322,14 +388,16 @@ namespace _9Converter
                 }
                 MessageBox.Show(ex.Message);
             }
-            MessageBox.Show("Saved");
         }
 
-        private static Bitmap ResizeBitmap(Bitmap source, int width, int height)
+        public static Bitmap ResizeBitmap(Bitmap source, int width, int height, 
+            System.Drawing.Drawing2D.InterpolationMode mode = 
+            System.Drawing.Drawing2D.InterpolationMode.Default)
         {
             Bitmap result = new Bitmap(width, height);
             using (Graphics gr=Graphics.FromImage(result))
             {
+                gr.InterpolationMode = mode;
                 gr.DrawImage(source, 0, 0, width, height);
             }
             return result;
