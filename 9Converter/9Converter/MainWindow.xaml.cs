@@ -52,7 +52,7 @@ namespace _9Converter
 
         private void Image9Patch()
         {
-            Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
+            Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
 
@@ -140,14 +140,14 @@ namespace _9Converter
             frameMatrix[3].Add(count);
             #endregion
 
-            bool not9Patch;
+           /* bool not9Patch;
             if (frameMatrix[0].Count == 1 &&
                 frameMatrix[1].Count == 1 &&
                 frameMatrix[2].Count == 1 &&
                 frameMatrix[3].Count == 1)
             {
                 not9Patch = true;
-            }
+            }*/
 
             #region Create resizingMatrix6, 4 and 3
             List<int>[] resizingMatrix6 = Resizing(frameMatrix, 6);
@@ -182,8 +182,8 @@ namespace _9Converter
             #endregion
 
             #region Work with Files and Directories
-            CreateDir(txtFileName.Text);
-            string fn = txtFileName.Text;
+            CreateDir("Something");
+            string fn = "Something";
             string[] splitPath = fn.Split(@"\"[0]);
             int ln = splitPath.Length;
 
@@ -218,7 +218,7 @@ namespace _9Converter
 
         private void SimpleImage()
         {
-            Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
+            Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
 
@@ -232,8 +232,8 @@ namespace _9Converter
             #endregion
 
             #region Work with Files and Directories
-            CreateDir(txtFileName.Text);
-            string fn = txtFileName.Text;
+            CreateDir("Something");
+            string fn = "Something";
             string[] splitPath = fn.Split(@"\"[0]);
             int ln = splitPath.Length;
 
@@ -468,11 +468,11 @@ namespace _9Converter
 
         private void button3_Click(object sender, RoutedEventArgs e)
         {
-            string[] files = Directory.GetFiles(txtFileName.Text);
+            string[] files = Directory.GetFiles("Something");
            
             for (int i = 0; i < files.Length; i++)
             {
-                txtFileName.Text = files[i];
+                //txtFileName.Text = files[i];
                 SimpleImage();
             }
             MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
@@ -481,18 +481,30 @@ namespace _9Converter
 
         private void button4_Click(object sender, RoutedEventArgs e)
         {
-            string[] files = Directory.GetFiles(txtFileName.Text);
+            string[] files = Directory.GetFiles("Something");
             for (int i = 0; i < files.Length; i++)
             {
-                txtFileName.Text = files[i];
-                Image9Patch();
+                /*txtFileName.Text = files[i];
+                Image9Patch();*/
             }
             MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
         }
 
-        private void Grid_Drop(object sender, DragEventArgs e)
+        private void lstbDragAndDrop_DragEnter(object sender, DragEventArgs e)
         {
-            MessageBox.Show("Drop something");
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+        }
+
+        private void lstbDragAndDrop_Drop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                lstbDragAndDrop.Items.Add(file);
+            }
         }
     }
 }
