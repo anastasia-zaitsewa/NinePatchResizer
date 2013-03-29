@@ -2,10 +2,14 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
+    <Grid Drop="Grid_Drop" AllowDrop="True">
         <TextBlock Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="textBlock1" Text="Path for 9_picture with highest definition:" VerticalAlignment="Top" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,43,0,0" Name="txtFileName" VerticalAlignment="Top" Width="398" Text="C:\Users\Настя\Documents\Projects\nineConverter\spinner_normal.9.png" IsEnabled="False" />
-        <Button Content="Browse" Height="23" HorizontalAlignment="Left" Margin="10,76,0,0" Name="btnBrowse" VerticalAlignment="Top" Width="75" IsEnabled="False" />
-        <Button Content="Convert" Height="23" HorizontalAlignment="Left" Margin="10,109,0,0" Name="btnConvert" VerticalAlignment="Top" Width="75" Click="btnConvert_Click" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="10,43,0,0" Name="txtFileName" VerticalAlignment="Top" Width="398" Text="C:\Users\Настя\Documents\Projects\nineConverter\spinner_normal.9.png" />
+        <Button Content="Resize 9Patch" Height="23" HorizontalAlignment="Left" Margin="10,109,0,0" Name="btnConvert" VerticalAlignment="Top" Width="75" Click="btnConvert_Click" />
+        <Button Content="Get XML" Height="23" HorizontalAlignment="Left" Margin="12,138,0,0" Name="button1" VerticalAlignment="Top" Width="75" />
+        <Button Content="Resize Image" Height="23" HorizontalAlignment="Left" Margin="102,109,0,0" Name="button2" VerticalAlignment="Top" Width="75" Click="btnResize_Click" />
+        <Label Content="" Height="28" HorizontalAlignment="Left" Margin="10,72,0,0" Name="currFile" VerticalAlignment="Top" />
+        <Button Content="All Images" Height="23" HorizontalAlignment="Left" Margin="333,77,0,0" Name="button3" VerticalAlignment="Top" Width="75" Click="button3_Click" />
+        <Button Content="All 9Patches" Height="23" HorizontalAlignment="Left" Margin="333,109,0,0" Name="button4" VerticalAlignment="Top" Width="75" Click="button4_Click" />
     </Grid>
 </Window>

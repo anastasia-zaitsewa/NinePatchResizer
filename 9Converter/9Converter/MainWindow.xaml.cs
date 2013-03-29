@@ -47,6 +47,11 @@ namespace _9Converter
 
         private void btnConvert_Click(object sender, RoutedEventArgs e)
         {
+            Image9Patch();
+        }
+
+        private void Image9Patch()
+        {
             Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
@@ -78,38 +83,38 @@ namespace _9Converter
             frameMatrix[0].Add(count);
 
             //vertical-right
-            curColor = Source.GetPixel(sourceWidth-1, 0);
+            curColor = Source.GetPixel(sourceWidth - 1, 0);
             count = 0;
 
             for (int i = 0; i < sourceHeight; i++)
             {
-                if (Source.GetPixel(sourceWidth-1, i) == curColor)
+                if (Source.GetPixel(sourceWidth - 1, i) == curColor)
                 {
                     count++;
                 }
                 else
                 {
                     frameMatrix[1].Add(count);
-                    curColor = Source.GetPixel(sourceWidth-1, i);
+                    curColor = Source.GetPixel(sourceWidth - 1, i);
                     count = 1;
                 }
             }
             frameMatrix[1].Add(count);
 
             //horizontal-bottom
-            curColor = Source.GetPixel(0, sourceHeight-1);
+            curColor = Source.GetPixel(0, sourceHeight - 1);
             count = 0;
 
             for (int i = 0; i < sourceWidth; i++)
             {
-                if (Source.GetPixel(i, sourceHeight-1) == curColor)
+                if (Source.GetPixel(i, sourceHeight - 1) == curColor)
                 {
                     count++;
                 }
                 else
                 {
                     frameMatrix[2].Add(count);
-                    curColor = Source.GetPixel(i, sourceHeight-1);
+                    curColor = Source.GetPixel(i, sourceHeight - 1);
                     count = 1;
                 }
             }
@@ -118,7 +123,7 @@ namespace _9Converter
             //vertical-left
             curColor = Source.GetPixel(0, 0);
             count = 0;
-            
+
             for (int i = 0; i < sourceHeight; i++)
             {
                 if (Source.GetPixel(0, i) == curColor)
@@ -135,6 +140,15 @@ namespace _9Converter
             frameMatrix[3].Add(count);
             #endregion
 
+            bool not9Patch;
+            if (frameMatrix[0].Count == 1 &&
+                frameMatrix[1].Count == 1 &&
+                frameMatrix[2].Count == 1 &&
+                frameMatrix[3].Count == 1)
+            {
+                not9Patch = true;
+            }
+
             #region Create resizingMatrix6, 4 and 3
             List<int>[] resizingMatrix6 = Resizing(frameMatrix, 6);
             List<int>[] resizingMatrix4 = Resizing(frameMatrix, 4);
@@ -143,18 +157,18 @@ namespace _9Converter
 
             #region Crop, Resize and Expand Source Image
             //Crop
-            System.Drawing.Rectangle cropArea = new System.Drawing.Rectangle(1, 1, 161, 97);
+            System.Drawing.Rectangle cropArea = new System.Drawing.Rectangle(1, 1, sourceWidth-2, sourceHeight-2);
             Bitmap cropSource = Source.Clone(cropArea, Source.PixelFormat);
-            
+
             //Resize
             Bitmap resizingImage6 = ResizeBitmap(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
             Bitmap resizingImage4 = ResizeBitmap(cropSource, sourceWidth / 2, sourceHeight / 2);
-            Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8, 
+            Bitmap resizingImage3 = ResizeBitmap(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8,
                 System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
 
             /*string fn = @"C:\Users\Настя\Documents\Projects\nineConverter\spinner_resize.9.png";
             NonLockingSave(resizingImage6, fn, ImageFormat.Png);*/
-            
+
             //Expand
             Bitmap expandedImage6 = ExpandBitmap(resizingImage6);
             Bitmap expandedImage4 = ExpandBitmap(resizingImage4);
@@ -166,14 +180,14 @@ namespace _9Converter
             Draw9PatchStamp(resizingMatrix4, expandedImage4);
             Draw9PatchStamp(resizingMatrix3, expandedImage3);
             #endregion
-            
+
             #region Work with Files and Directories
             CreateDir(txtFileName.Text);
-            string fn=txtFileName.Text;
+            string fn = txtFileName.Text;
             string[] splitPath = fn.Split(@"\"[0]);
             int ln = splitPath.Length;
 
-            string[] splitPathDpi=new string[ln];
+            string[] splitPathDpi = new string[ln];
             splitPath.CopyTo(splitPathDpi, 0);
             splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
             fn = CancelSplitString(splitPathDpi);
@@ -194,7 +208,56 @@ namespace _9Converter
             fn = CancelSplitString(splitPathDpi);
             NonLockingSave(expandedImage3, fn, ImageFormat.Png);
             #endregion
-            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
+            
+        }
+
+        private void btnResize_Click(object sender, RoutedEventArgs e)
+        {
+            SimpleImage();
+        }
+
+        private void SimpleImage()
+        {
+            Bitmap Source = SourceImageFactory.NonLockingOpen(txtFileName.Text);
+            int sourceWidth = Source.Width;
+            int sourceHeight = Source.Height;
+
+            #region Crop, Resize and Expand Source Image
+
+            //Resize
+            Bitmap resizingImage6 = ResizeBitmap(Source, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
+            Bitmap resizingImage4 = ResizeBitmap(Source, sourceWidth / 2, sourceHeight / 2);
+            Bitmap resizingImage3 = ResizeBitmap(Source, sourceWidth * 3 / 8, sourceHeight * 3 / 8,
+                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
+            #endregion
+
+            #region Work with Files and Directories
+            CreateDir(txtFileName.Text);
+            string fn = txtFileName.Text;
+            string[] splitPath = fn.Split(@"\"[0]);
+            int ln = splitPath.Length;
+
+            string[] splitPathDpi = new string[ln];
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(Source, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-hdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(resizingImage6, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-mdpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(resizingImage4, fn, ImageFormat.Png);
+
+            splitPath.CopyTo(splitPathDpi, 0);
+            splitPathDpi[ln - 1] = @"drawable-ldpi\" + splitPath[ln - 1];
+            fn = CancelSplitString(splitPathDpi);
+            NonLockingSave(resizingImage3, fn, ImageFormat.Png);
+            #endregion
         }
 
         private static string CancelSplitString(string[] split)
@@ -401,6 +464,35 @@ namespace _9Converter
                 gr.DrawImage(source, 0, 0, width, height);
             }
             return result;
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            string[] files = Directory.GetFiles(txtFileName.Text);
+           
+            for (int i = 0; i < files.Length; i++)
+            {
+                txtFileName.Text = files[i];
+                SimpleImage();
+            }
+            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
+
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            string[] files = Directory.GetFiles(txtFileName.Text);
+            for (int i = 0; i < files.Length; i++)
+            {
+                txtFileName.Text = files[i];
+                Image9Patch();
+            }
+            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
+        }
+
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("Drop something");
         }
     }
 }
