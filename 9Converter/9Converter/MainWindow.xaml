@@ -34,7 +34,7 @@
                 HorizontalAlignment="Left" 
                 Width="75" />
         </StackPanel>
-        <ListBox Margin="0,30,0,0" Name="lstbDragAndDrop" AllowDrop="True" DragEnter="lstbDragAndDrop_DragEnter" Drop="lstbDragAndDrop_Drop">
+        <ListBox Margin="0,30,0,0" Name="lstbDragAndDrop" AllowDrop="True" DragEnter="lstbDragAndDrop_DragEnter" Drop="lstbDragAndDrop_Drop" ToolTip="DragDrop Your Images or 9Patches">
             
         </ListBox>
     </Grid>
