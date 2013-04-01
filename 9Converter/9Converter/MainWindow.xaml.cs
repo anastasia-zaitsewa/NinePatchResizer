@@ -45,233 +45,57 @@ namespace _9Converter
                 Directory.CreateDirectory(folderPath + @"\drawable-ldpi");
         }
 
-        private void Image9Patch()
-        {
-            //TODO:Delete first two regions
-            Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
-            int sourceWidth = Source.Width;
-            int sourceHeight = Source.Height;
-
-            PatchFrame SourceFrame = new PatchFrame();
-            SourceFrame.Fill(Source);
-
-            PatchFrame ResFrame6 = SourceFrame.Resize(6);
-            PatchFrame ResFrame4 = SourceFrame.Resize(4);
-            PatchFrame ResFrame3 = SourceFrame.Resize(3);
-
-            #region Crop, Resize and Expand Source Image
-            ImageProcessor imgProc = new ImageProcessor();
-            
-            //Crop
-            Bitmap cropSource = imgProc.Crop(Source);
-
-            //Resize
-            Bitmap resizingImage6 = imgProc.Resize(cropSource, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
-            Bitmap resizingImage4 = imgProc.Resize(cropSource, sourceWidth / 2, sourceHeight / 2);
-            Bitmap resizingImage3 = imgProc.Resize(cropSource, sourceWidth * 3 / 8, sourceHeight * 3 / 8,
-                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
-
-            //Expand
-            Bitmap expandedImage6 = imgProc.Expand(resizingImage6);
-            Bitmap expandedImage4 = imgProc.Expand(resizingImage4);
-            Bitmap expandedImage3 = imgProc.Expand(resizingImage3);
-            #endregion
-
-            #region Draw Nine_Stamp
-            imgProc.Draw9PatchStamp(ResFrame6, expandedImage6);
-            imgProc.Draw9PatchStamp(ResFrame4, expandedImage4);
-            imgProc.Draw9PatchStamp(ResFrame3, expandedImage3);
-            #endregion
-
-            #region Work with Files and Directories
-            CreateDir("Something");
-            string fn = "Something";
-            string[] splitPath = fn.Split(@"\"[0]);
-            int ln = splitPath.Length;
-
-            string[] splitPathDpi = new string[ln];
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(Source, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-hdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(expandedImage6, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-mdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(expandedImage4, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-ldpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(expandedImage3, fn, ImageFormat.Png);
-            #endregion
-        }
-
-        private void SimpleImage()
-        {
-            //TODO: Delete first region
-            Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
-            int sourceWidth = Source.Width;
-            int sourceHeight = Source.Height;
-
-            #region Resize Source Image
-
-            ImageProcessor imgProc = new ImageProcessor();
-            //Resize
-            Bitmap resizingImage6 = imgProc.Resize(Source, sourceWidth * 6 / 8, sourceHeight * 6 / 8);
-            Bitmap resizingImage4 = imgProc.Resize(Source, sourceWidth / 2, sourceHeight / 2);
-            Bitmap resizingImage3 = imgProc.Resize(Source, sourceWidth * 3 / 8, sourceHeight * 3 / 8,
-                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
-            #endregion
-
-            #region Work with Files and Directories
-            CreateDir("Something");
-            string fn = "Something";
-            string[] splitPath = fn.Split(@"\"[0]);
-            int ln = splitPath.Length;
-
-            string[] splitPathDpi = new string[ln];
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            //TODO: ImageFormat must be checked
-            NonLockingSave(Source, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-hdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(resizingImage6, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-mdpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(resizingImage4, fn, ImageFormat.Png);
-
-            splitPath.CopyTo(splitPathDpi, 0);
-            splitPathDpi[ln - 1] = @"drawable-ldpi\" + splitPath[ln - 1];
-            fn = CancelSplitString(splitPathDpi);
-            NonLockingSave(resizingImage3, fn, ImageFormat.Png);
-            #endregion
-        }
-
-        private string CancelSplitString(string[] split)
-        {
-            string fn = "";
-            for (int i = 0; i < split.Length; i++)
-            {
-                if (i == split.Length - 1)
-                {
-                    fn += split[i];
-                }
-                else
-                {
-                    fn = fn + split[i] + @"\"[0];
-                }
-
-            }
-            return fn;
-        }
-
-        public void NonLockingSave(Bitmap btm, string filename, ImageFormat format)
-        {
-            if (File.Exists(filename))
-            {
-                File.Delete(filename);
-            }
-            try
-            {
-                #region Convert Bitmap to Destination Format
-                MemoryStream ms = new MemoryStream();
-                Bitmap btm2 = (Bitmap)btm.Clone();
-                btm2.Save(ms, format);
-                btm2.Dispose();
-                byte[] byteArr = ms.ToArray();
-                ms.Close();
-                ms.Dispose();
-                #endregion
-
-                #region Save Byte Array to File
-                FileStream fs = new FileStream(filename, FileMode.CreateNew, FileAccess.Write);
-                try
-                {
-                    fs.Write(byteArr, 0, byteArr.Length);
-                }
-                catch (Exception ex)
-                {
-
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    fs.Close();
-                    fs.Dispose();
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                if (File.Exists(filename))
-                {
-                    File.Delete(filename);
-                }
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            CheckDirsInList();
+
+            string path;
+            List<string> imageExts = new List<string> { ".jpeg", ".jpg", ".png", ".bmp" };
+            Bitmap[] result=null;
+            for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
+            {
+                path = lstbDragAndDrop.Items[i].ToString();
+                if (path.ToLowerInvariant().EndsWith(".9.png"))
+                {
+                    NinePatchResizer nRes = new NinePatchResizer();
+                    result = nRes.ResizeImage(path);
+                }
+                else if (imageExts.Contains(System.IO.Path.GetExtension(path).ToLowerInvariant()))
+                {
+                    ImageResizer imRes = new ImageResizer();
+                    result = imRes.ResizeImage(path);
+                }
+                CreateDir(path);
+                if (result != null)
+                {
+                    ImageSaver imS = new ImageSaver();
+                    imS.SaveImageArray(result, path);
+                }
+            }
+            MessageBox.Show("Check Folder with Your Image(s).", "Resizing succed.");
+        }
+
+        private void CheckDirsInList()
         {
             string path;
             for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
-			{
+            {
                 path = lstbDragAndDrop.Items[i].ToString();
-                //List<string> imageExts=new List<string>{".jpeg",".jpg",".png", ".bmp"};
                 string[] allFiles;
-                //TODO: Working with List
                 if (Directory.Exists(path))
                 {
-                    allFiles=Directory.GetFiles(path);
+                    allFiles = Directory.GetFiles(path);
                     lstbDragAndDrop.Items.RemoveAt(i);
                     for (int j = 0; j < allFiles.Length; j++)
-			        {
-			            lstbDragAndDrop.Items.Add(allFiles[j]);
-			        }
+                    {
+                        lstbDragAndDrop.Items.Add(allFiles[j]);
+                    }
                     i--;
                 }
-                    /*for (int j = 0; j < allFiles.Length; j++)
-                    {
-                        if (File.Exists(allFiles[j]))
-                        {
-                            string[] splitPath = allFiles[j].Split('.');
-                            //TODO: ToLowerInvariant
-                            if(allFiles[j].EndsWith(".9.png") || allFiles[j].EndsWith(".9.PNG"))
-                            {
-                                NinePatchResizer nRes = new NinePatchResizer();
-                                Bitmap[] result = nRes.ResizeImage(path);
-                            }
-                            else if(imageExts.Contains(System.IO.Path.GetExtension(allFiles[i]).ToLowerInvariant()))
-                            {
-                                ImageResizer imRes = new ImageResizer();
-                                imRes.ResizeImage(allFiles[i]);
-                            }
-                        }*/
             }
         }
-            
-            /*string[] files = Directory.GetFiles("Something");
-           
-            for (int i = 0; i < files.Length; i++)
-            {
-                //txtFileName.Text = files[i];
-                SimpleImage();
-            }
-            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");*/
 
-
+        #region Drag & Drop
         private void lstbDragAndDrop_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
@@ -288,5 +112,6 @@ namespace _9Converter
                 lstbDragAndDrop.Items.Add(file);
             }
         }
+        #endregion
     }
 }

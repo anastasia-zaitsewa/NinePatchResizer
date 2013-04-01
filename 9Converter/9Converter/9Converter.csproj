@@ -59,6 +59,7 @@
     </ApplicationDefinition>
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="ImageResizer.cs" />
+    <Compile Include="ImageSaver.cs" />
     <Compile Include="IResizer.cs" />
     <Compile Include="NinePatchResizer.cs" />
     <Compile Include="PatchFrame.cs" />
