@@ -45,13 +45,9 @@ namespace _9Converter
                 Directory.CreateDirectory(folderPath + @"\drawable-ldpi");
         }
 
-        private void btnConvert_Click(object sender, RoutedEventArgs e)
-        {
-            Image9Patch();
-        }
-
         private void Image9Patch()
         {
+            //TODO:Delete first two regions
             Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
@@ -116,13 +112,9 @@ namespace _9Converter
             #endregion
         }
 
-        private void btnResize_Click(object sender, RoutedEventArgs e)
-        {
-            SimpleImage();
-        }
-
         private void SimpleImage()
         {
+            //TODO: Delete first region
             Bitmap Source = SourceImageFactory.NonLockingOpen("Something");
             int sourceWidth = Source.Width;
             int sourceHeight = Source.Height;
@@ -147,6 +139,7 @@ namespace _9Converter
             splitPath.CopyTo(splitPathDpi, 0);
             splitPathDpi[ln - 1] = @"drawable-xhdpi\" + splitPath[ln - 1];
             fn = CancelSplitString(splitPathDpi);
+            //TODO: ImageFormat must be checked
             NonLockingSave(Source, fn, ImageFormat.Png);
 
             splitPath.CopyTo(splitPathDpi, 0);
@@ -166,7 +159,7 @@ namespace _9Converter
             #endregion
         }
 
-        private static string CancelSplitString(string[] split)
+        private string CancelSplitString(string[] split)
         {
             string fn = "";
             for (int i = 0; i < split.Length; i++)
@@ -184,7 +177,7 @@ namespace _9Converter
             return fn;
         }
 
-        public static void NonLockingSave(Bitmap btm, string filename, ImageFormat format)
+        public void NonLockingSave(Bitmap btm, string filename, ImageFormat format)
         {
             if (File.Exists(filename))
             {
@@ -232,27 +225,52 @@ namespace _9Converter
 
         private void button3_Click(object sender, RoutedEventArgs e)
         {
-            string[] files = Directory.GetFiles("Something");
+            string path;
+            for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
+			{
+                path = lstbDragAndDrop.Items[i].ToString();
+                //List<string> imageExts=new List<string>{".jpeg",".jpg",".png", ".bmp"};
+                string[] allFiles;
+                //TODO: Working with List
+                if (Directory.Exists(path))
+                {
+                    allFiles=Directory.GetFiles(path);
+                    lstbDragAndDrop.Items.RemoveAt(i);
+                    for (int j = 0; j < allFiles.Length; j++)
+			        {
+			            lstbDragAndDrop.Items.Add(allFiles[j]);
+			        }
+                    i--;
+                }
+                    /*for (int j = 0; j < allFiles.Length; j++)
+                    {
+                        if (File.Exists(allFiles[j]))
+                        {
+                            string[] splitPath = allFiles[j].Split('.');
+                            //TODO: ToLowerInvariant
+                            if(allFiles[j].EndsWith(".9.png") || allFiles[j].EndsWith(".9.PNG"))
+                            {
+                                NinePatchResizer nRes = new NinePatchResizer();
+                                Bitmap[] result = nRes.ResizeImage(path);
+                            }
+                            else if(imageExts.Contains(System.IO.Path.GetExtension(allFiles[i]).ToLowerInvariant()))
+                            {
+                                ImageResizer imRes = new ImageResizer();
+                                imRes.ResizeImage(allFiles[i]);
+                            }
+                        }*/
+            }
+        }
+            
+            /*string[] files = Directory.GetFiles("Something");
            
             for (int i = 0; i < files.Length; i++)
             {
                 //txtFileName.Text = files[i];
                 SimpleImage();
             }
-            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
+            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");*/
 
-        }
-
-        private void button4_Click(object sender, RoutedEventArgs e)
-        {
-            string[] files = Directory.GetFiles("Something");
-            for (int i = 0; i < files.Length; i++)
-            {
-                /*txtFileName.Text = files[i];
-                Image9Patch();*/
-            }
-            MessageBox.Show("Check Folder with Your Image(s).", "Convertation succed.");
-        }
 
         private void lstbDragAndDrop_DragEnter(object sender, DragEventArgs e)
         {

@@ -3,31 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <StackPanel Height="30" HorizontalAlignment="Left" Margin="0,0,0,0" Name="stackPanel1" VerticalAlignment="Top" Orientation="Horizontal">
-            <Button Name="button2" 
-                Content="Resize Image" 
-                Height="23" 
-                Width="75" 
-                Click="btnResize_Click" 
-                HorizontalAlignment="Left"/>
-            <Button Name="btnConvert"
-                Content="Resize 9Patch" 
-                Height="23" 
-                HorizontalAlignment="Left"  
-                Width="80" 
-                Click="btnConvert_Click" />
+        <StackPanel Name="stackPanel1"
+            Height="30" 
+            HorizontalAlignment="Left" 
+            Margin="0,0,0,0"  
+            VerticalAlignment="Top" 
+            Orientation="Horizontal">
             <Button Name="button3"
                 Content="All Images" 
                 Height="23" 
                 HorizontalAlignment="Left"  
                 Width="75" 
                 Click="button3_Click" />
-            <Button Name="button4"
-                Content="All 9Patches" 
-                Height="23" 
-                HorizontalAlignment="Left" 
-                Width="75" 
-                Click="button4_Click" />
             <Button Name="button1"
                 Content="Get XML" 
                 Height="23" 
