@@ -45,22 +45,11 @@ namespace _9Converter
             return fn;
         }
 
-        private void NonLockingSave(Bitmap btm, string filename)
+        public void NonLockingSave(Bitmap btm, string filename, ImageFormat format)
         {
             if (File.Exists(filename))
             {
                 File.Delete(filename);
-            }
-
-            ImageFormat format = ImageFormat.Png;
-
-            if (btm.RawFormat.Equals(ImageFormat.Jpeg))
-            {
-                format = ImageFormat.Jpeg;
-            }
-            else if (btm.RawFormat.Equals(ImageFormat.Bmp))
-            {
-                format = ImageFormat.Bmp;
             }
 
             try
@@ -70,6 +59,7 @@ namespace _9Converter
                 Bitmap btm2 = (Bitmap)btm.Clone();
                 btm2.Save(ms, format);
                 btm2.Dispose();
+                var img = Image.FromStream(ms);
                 byte[] byteArr = ms.ToArray();
                 ms.Close();
                 ms.Dispose();
@@ -105,9 +95,24 @@ namespace _9Converter
 
         public void SaveImageArray(Bitmap[] imgArr, string fn)
         {
-            for (int i = 0; i < 4; i++)
+            ImageFormat format = ImageFormat.Png;
+            if (fn.ToLowerInvariant().EndsWith(".jpeg") || fn.ToLowerInvariant().EndsWith(".jpg"))
             {
-                NonLockingSave(imgArr[i], GetImagePath(fn, (Dpi)i));   
+                format = ImageFormat.Jpeg;
+            }
+            else if (fn.ToLowerInvariant().EndsWith(".bmp"))
+            {
+                format = ImageFormat.Bmp;
+            }
+            string fnXhdpi = GetImagePath(fn, Dpi.xhdpi);
+            if (File.Exists(fnXhdpi))
+            {
+                File.Delete(fnXhdpi);
+            }
+            File.Copy(fn, fnXhdpi);
+            for (int i = 1; i < 4; i++)
+            {
+                NonLockingSave(imgArr[i], GetImagePath(fn, (Dpi)i), format);   
             }
         }
 

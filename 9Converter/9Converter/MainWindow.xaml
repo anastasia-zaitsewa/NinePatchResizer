@@ -15,14 +15,10 @@
                 HorizontalAlignment="Left"  
                 Width="75" 
                 Click="button3_Click" />
-            <Button Name="button1"
-                Content="Get XML" 
-                Height="23" 
-                HorizontalAlignment="Left" 
-                Width="75" />
         </StackPanel>
         <ListBox Margin="0,30,0,0" Name="lstbDragAndDrop" AllowDrop="True" DragEnter="lstbDragAndDrop_DragEnter" Drop="lstbDragAndDrop_Drop" ToolTip="DragDrop Your Images or 9Patches">
             
         </ListBox>
+        <ProgressBar Height="10" Name="progressBar1" Width="100" ValueChanged="progressBar1_ValueChanged" />
     </Grid>
 </Window>

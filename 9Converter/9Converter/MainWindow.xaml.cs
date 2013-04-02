@@ -52,9 +52,11 @@ namespace _9Converter
             string path;
             List<string> imageExts = new List<string> { ".jpeg", ".jpg", ".png", ".bmp" };
             Bitmap[] result=null;
+
             for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
             {
                 path = lstbDragAndDrop.Items[i].ToString();
+                result = null;
                 if (path.ToLowerInvariant().EndsWith(".9.png"))
                 {
                     NinePatchResizer nRes = new NinePatchResizer();
@@ -69,9 +71,11 @@ namespace _9Converter
                 if (result != null)
                 {
                     ImageSaver imS = new ImageSaver();
+                    //TODO: Do not retrive Sourse in Bitmap[]
                     imS.SaveImageArray(result, path);
                 }
             }
+            lstbDragAndDrop.Items.Clear();
             MessageBox.Show("Check Folder with Your Image(s).", "Resizing succed.");
         }
 
@@ -113,5 +117,10 @@ namespace _9Converter
             }
         }
         #endregion
+
+        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
     }
 }
