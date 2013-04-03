@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading.Tasks;
+using System.Threading;
 
 
 namespace _9Converter
@@ -27,6 +29,8 @@ namespace _9Converter
         {
             
             InitializeComponent();
+            txtHint.Visibility = Visibility.Visible;
+            progressBar1.Visibility = Visibility.Hidden;
         }
 
         private void CreateDir(string filename)
@@ -45,38 +49,55 @@ namespace _9Converter
                 Directory.CreateDirectory(folderPath + @"\drawable-ldpi");
         }
 
-        private void button3_Click(object sender, RoutedEventArgs e)
+        private void ImageProcessing()
         {
+            lstbDragAndDrop.AllowDrop = false;
             CheckDirsInList();
 
             string path;
             List<string> imageExts = new List<string> { ".jpeg", ".jpg", ".png", ".bmp" };
             Bitmap[] result=null;
 
-            for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = lstbDragAndDrop.Items.Count;
+            progressBar1.Value = 0;
+            progressBar1.Visibility = Visibility.Visible;
+            Task.Factory.StartNew(() =>
             {
-                path = lstbDragAndDrop.Items[i].ToString();
-                result = null;
-                if (path.ToLowerInvariant().EndsWith(".9.png"))
+                for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
                 {
-                    NinePatchResizer nRes = new NinePatchResizer();
-                    result = nRes.ResizeImage(path);
+                    path = lstbDragAndDrop.Items[i].ToString();
+                    result = null;
+                    if (path.ToLowerInvariant().EndsWith(".9.png"))
+                    {
+                        NinePatchResizer nRes = new NinePatchResizer();
+                        result = nRes.ResizeImage(path);
+                    }
+                    else if (imageExts.Contains(System.IO.Path.GetExtension(path).ToLowerInvariant()))
+                    {
+                        ImageResizer imRes = new ImageResizer();
+                        result = imRes.ResizeImage(path);
+                    }
+                    CreateDir(path);
+                    if (result != null)
+                    {
+                        ImageSaver imS = new ImageSaver();
+                        //TODO: Do not retrive Sourse in Bitmap[]
+                        imS.SaveImageArray(result, path);
+                    }
+
+                    Dispatcher.Invoke( new Action(()=>{ progressBar1.Value++; }), null);
                 }
-                else if (imageExts.Contains(System.IO.Path.GetExtension(path).ToLowerInvariant()))
-                {
-                    ImageResizer imRes = new ImageResizer();
-                    result = imRes.ResizeImage(path);
-                }
-                CreateDir(path);
-                if (result != null)
-                {
-                    ImageSaver imS = new ImageSaver();
-                    //TODO: Do not retrive Sourse in Bitmap[]
-                    imS.SaveImageArray(result, path);
-                }
-            }
-            lstbDragAndDrop.Items.Clear();
-            MessageBox.Show("Check Folder with Your Image(s).", "Resizing succed.");
+
+                Dispatcher.Invoke(new Action( () =>
+                    {
+                        lstbDragAndDrop.Items.Clear();
+                        MessageBox.Show("Check Folder with Your Image(s).", "Resizing succed.");
+                        txtHint.Text = "DragDrop Your Images or 9Patches";
+                        progressBar1.Visibility = Visibility.Hidden;
+                        lstbDragAndDrop.AllowDrop = true;
+                    }), null);
+            });
         }
 
         private void CheckDirsInList()
@@ -110,17 +131,15 @@ namespace _9Converter
 
         private void lstbDragAndDrop_Drop(object sender, DragEventArgs e)
         {
+            txtHint.Text = "";
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
             {
                 lstbDragAndDrop.Items.Add(file);
             }
+
+            ImageProcessing();
         }
         #endregion
-
-        private void progressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-
-        }
     }
 }

@@ -1,24 +1,26 @@
 ﻿<Window x:Class="_9Converter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="9 Patch Resizer" Height="350" Width="525">
     <Grid>
-        <StackPanel Name="stackPanel1"
-            Height="30" 
-            HorizontalAlignment="Left" 
-            Margin="0,0,0,0"  
-            VerticalAlignment="Top" 
-            Orientation="Horizontal">
-            <Button Name="button3"
-                Content="All Images" 
-                Height="23" 
-                HorizontalAlignment="Left"  
-                Width="75" 
-                Click="button3_Click" />
-        </StackPanel>
-        <ListBox Margin="0,30,0,0" Name="lstbDragAndDrop" AllowDrop="True" DragEnter="lstbDragAndDrop_DragEnter" Drop="lstbDragAndDrop_Drop" ToolTip="DragDrop Your Images or 9Patches">
+        <ListBox Name="lstbDragAndDrop"
+            AllowDrop="True" 
+            DragEnter="lstbDragAndDrop_DragEnter" 
+            Drop="lstbDragAndDrop_Drop"/>
+        <TextBlock Name="txtHint"
+            Text="DragDrop Your Images or 9Patches" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center" 
+            AllowDrop="True" 
+            DragEnter="lstbDragAndDrop_DragEnter" 
+            Drop="lstbDragAndDrop_Drop"
+            Height="20"
+            Width="Auto" 
+            />
+        <ProgressBar Name="progressBar1"
+            Height="10"  
+            Width="100"
             
-        </ListBox>
-        <ProgressBar Height="10" Name="progressBar1" Width="100" ValueChanged="progressBar1_ValueChanged" />
+            />
     </Grid>
 </Window>
