@@ -2,11 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="9 Patch Resizer" Height="350" Width="525">
-    <Grid>
-        <ListBox Name="lstbDragAndDrop"
-            AllowDrop="True" 
-            DragEnter="lstbDragAndDrop_DragEnter" 
-            Drop="lstbDragAndDrop_Drop"/>
+    <Grid Name="lstbDragAndDrop"
+        AllowDrop="True" 
+        DragEnter="lstbDragAndDrop_DragEnter" 
+        Drop="lstbDragAndDrop_Drop">
         <TextBlock Name="txtHint"
             Text="DragDrop Your Images or 9Patches" 
             VerticalAlignment="Center" 
@@ -22,5 +21,8 @@
             Width="100"
             
             />
+        <Grid.Background>
+            <SolidColorBrush />
+        </Grid.Background>
     </Grid>
 </Window>

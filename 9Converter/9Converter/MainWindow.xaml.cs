@@ -25,6 +25,8 @@ namespace _9Converter
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<string> FileList = new List<string>();
+
         public MainWindow()
         {
             
@@ -59,14 +61,14 @@ namespace _9Converter
             Bitmap[] result=null;
 
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = lstbDragAndDrop.Items.Count;
+            progressBar1.Maximum = FileList.Count;
             progressBar1.Value = 0;
             progressBar1.Visibility = Visibility.Visible;
             Task.Factory.StartNew(() =>
             {
-                for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
+                for (int i = 0; i < FileList.Count; i++)
                 {
-                    path = lstbDragAndDrop.Items[i].ToString();
+                    path = FileList[i];
                     result = null;
                     if (path.ToLowerInvariant().EndsWith(".9.png"))
                     {
@@ -88,11 +90,10 @@ namespace _9Converter
 
                     Dispatcher.Invoke( new Action(()=>{ progressBar1.Value++; }), null);
                 }
-
+                FileList.Clear();
                 Dispatcher.Invoke(new Action( () =>
                     {
-                        lstbDragAndDrop.Items.Clear();
-                        MessageBox.Show("Check Folder with Your Image(s).", "Resizing succed.");
+                        MessageBox.Show(Application.Current.MainWindow,"Check Folder with Your Image(s).", "9 Patch Resizer: \"Resizing succed.\"");
                         txtHint.Text = "DragDrop Your Images or 9Patches";
                         progressBar1.Visibility = Visibility.Hidden;
                         lstbDragAndDrop.AllowDrop = true;
@@ -103,17 +104,17 @@ namespace _9Converter
         private void CheckDirsInList()
         {
             string path;
-            for (int i = 0; i < lstbDragAndDrop.Items.Count; i++)
+            for (int i = 0; i < FileList.Count; i++)
             {
-                path = lstbDragAndDrop.Items[i].ToString();
+                path = FileList[i];
                 string[] allFiles;
                 if (Directory.Exists(path))
                 {
                     allFiles = Directory.GetFiles(path);
-                    lstbDragAndDrop.Items.RemoveAt(i);
+                    FileList.RemoveAt(i);
                     for (int j = 0; j < allFiles.Length; j++)
                     {
-                        lstbDragAndDrop.Items.Add(allFiles[j]);
+                        FileList.Add(allFiles[j]);
                     }
                     i--;
                 }
@@ -135,7 +136,7 @@ namespace _9Converter
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
             {
-                lstbDragAndDrop.Items.Add(file);
+                FileList.Add(file);
             }
 
             ImageProcessing();
