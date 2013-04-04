@@ -8,7 +8,7 @@ If you'll try to resize 9-patch image (.9.png) in your favorite editor, you'll n
 NinePatch Resizer can do all of this for you. It correctly resizes your 9-patch images (or a simple images) for each density and arranges result into corresponding folders (drawable-xhdpi, etc.).
 
 
-![Download](https://github.com/anastasia-zaitsewa/NinePatchResizer/blob/master/NinePatchResizer.zip?raw=true)
+[Download](https://github.com/anastasia-zaitsewa/NinePatchResizer/blob/master/NinePatchResizer.zip?raw=true)
 
 Usage
 =====
